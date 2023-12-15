@@ -7,28 +7,28 @@ local RanimationName = "outro_90l"
 local animationDuration = Config.animationDuration
 
 function LPlayGearChangeAnimation(gear)
-if GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId()), -1) == PlayerPedId() then
+if GetPedInVehicleSeat(GetVehiclePedIsIn(cache.ped), -1) == cache.ped then
     RequestAnimDict(LanimationDict)
     while not HasAnimDictLoaded(LanimationDict) do
-        Citizen.Wait(0)
+        Wait(0)
     end
-    TaskPlayAnim(PlayerPedId(), LanimationDict, LanimationName, 8.0, 1.0, animationDuration, 48, 0, 0, 0, 0)
+    TaskPlayAnim(cache.ped, LanimationDict, LanimationName, 8.0, 1.0, animationDuration, 48, 0, 0, 0, 0)
 
-    Citizen.Wait(animationDuration)
-    StopAnimTask(PlayerPedId(), LanimationDict, LanimationName, 1.0)
+    Wait(animationDuration)
+    StopAnimTask(cache.ped, LanimationDict, LanimationName, 1.0)
 end
 end
 
 function RPlayGearChangeAnimation(gear)
-if GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId()), -1) == PlayerPedId() then 
+if GetPedInVehicleSeat(GetVehiclePedIsIn(cache.ped), -1) == cache.ped then 
     RequestAnimDict(RanimationDict)
     while not HasAnimDictLoaded(RanimationDict) do
-        Citizen.Wait(0)
+        Wait(0)
     end
-    TaskPlayAnim(PlayerPedId(), RanimationDict, RanimationName, 8.0, 1.0, animationDuration, 48, 0, 0, 0, 0)
+    TaskPlayAnim(cache.ped, RanimationDict, RanimationName, 8.0, 1.0, animationDuration, 48, 0, 0, 0, 0)
 
-    Citizen.Wait(animationDuration)
-    StopAnimTask(PlayerPedId(), RanimationDict, RanimationName, 1.0)
+    Wait(animationDuration)
+    StopAnimTask(cache.ped, RanimationDict, RanimationName, 1.0)
 end
 end
 
@@ -49,9 +49,8 @@ RegisterNetEvent("gearChange")
 AddEventHandler("gearChange", OnGearChange)
 
 function DetectGearChange()
-    local ped = PlayerPedId()
     local rhd = false
-    local vehicle = GetVehiclePedIsIn(ped, false)
+    local vehicle = GetVehiclePedIsIn(cache.ped, false)
     local blacklist = false
     local vehclass = GetVehicleClass(vehicle)
     local vehicleName = GetEntityModel(vehicle)
@@ -77,17 +76,17 @@ if vehicle ~= 0 then
     else
         if currentGear ~= 0 then
             currentGear = 0
-            StopAnimTask(PlayerPedId(), LanimationDict, LanimationName, 1.0)
-            StopAnimTask(PlayerPedId(), RanimationDict, RanimationName, 1.0)
-            ClearPedTasks(PlayerPedId())
+            StopAnimTask(cache.ped, LanimationDict, LanimationName, 1.0)
+            StopAnimTask(cache.ped, RanimationDict, RanimationName, 1.0)
+            ClearPedTasks(cache.ped)
         end
     end
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
         DetectGearChange()
-        Citizen.Wait(100)
+        Wait(100)
     end
 end)
 
